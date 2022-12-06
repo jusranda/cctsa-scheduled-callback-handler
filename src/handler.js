@@ -43,12 +43,14 @@ async function handleFulfillment (req, res) {
         res.status(500).send('application intialization failure');
         return;
     }
+    console.log(`GCP_CLOUD_TASKS_QUEUE: ${GCP_CLOUD_TASKS_QUEUE}`);
 
     if (WXCXT_TASK_HANDLER_URL == undefined) {
         console.log('application initialization error: Missing WXCXT_TASK_HANDLER_URL environment variable');
         res.status(500).send('application intialization failure');
         return;
     }
+    console.log(`WXCXT_TASK_HANDLER_URL: ${WXCXT_TASK_HANDLER_URL}`);
 
     res.set('Access-Control-Allow-Origin', "*")
 
