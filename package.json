@@ -1,7 +1,24 @@
 {
-  "name": "scheduled-callback-queue",
+  "name": "cctsa-scheduled-callback-handler",
   "version": "0.0.1",
-    "dependencies": {
-    "@google-cloud/tasks": "^3.0.5"
-  }
+  "dependencies": {
+    "@google-cloud/tasks": "^3.0.5",
+    "body-parser": "^1.20.1",
+    "express": "^4.18.2"
+  },
+  "description": "Project for hosting the WxCC Agent Desktop web widget HTTP action handler to schedule callbacks for demo purposes.",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jusranda/cctsa-scheduled-callback-handler.git"
+  },
+  "author": "Justin Randall",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jusranda/cctsa-scheduled-callback-handler/issues"
+  },
+  "homepage": "https://github.com/jusranda/cctsa-scheduled-callback-handler#readme"
 }
