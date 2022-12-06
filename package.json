@@ -1,0 +1,7 @@
+{
+  "name": "scheduled-callback-queue",
+  "version": "0.0.1",
+    "dependencies": {
+    "@google-cloud/tasks": "^3.0.5"
+  }
+}
