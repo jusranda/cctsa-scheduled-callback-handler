@@ -118,7 +118,7 @@ async function handleFulfillment (req, res) {
         console.log('createTask: '+JSON.stringify(result));
 
         if (result.createTask == undefined || result.createTask.length === 0) {
-            console.error('Unhandled error: '+err.stack);
+            console.error('Failed to create task.');
             res.status(500).send({ "retval": 2, "retmsg": "Failed to create task." });
             return;
         }
@@ -128,7 +128,7 @@ async function handleFulfillment (req, res) {
         return;
     } catch (err) {
         console.error('Unhandled error: '+err.stack);
-        res.status(500).send({ "retval": -1, "retmsg": "Unhandled error:"+err.message });
+        res.status(500).send({ "retval": -1, "retmsg": "Unhandled error: "+err.message });
         return;
     }
     
