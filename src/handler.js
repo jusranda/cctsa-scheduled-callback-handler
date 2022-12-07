@@ -60,15 +60,22 @@ async function handleFulfillment (req, res) {
         return;
     }
   
-    // Check if scheduledTime and timeZone exist in the body of the post
+    // Check for missing parameters.
     if (req.body.scheduledTime == '') {
+        console.error('Missing body parameter: scheduledTime is missing.');
         res.status(400).send('Request missing scheduled time');
         return;
     }
-    
-    // if (!req.body.timeZone == '') {
-    //   res.status(400).send('Request missing time zone');
-    // }
+    if (req.body.interaction.callProcessingDetails.QueueId == '') {
+        console.error('Missing body parameter: interaction.callProcessingDetails.QueueId is missing.');
+        res.status(400).send('Request missing queue ID');
+        return;
+    }
+    if (req.body.interaction.callProcessingDetails.ani == '') {
+        console.error('Missing body parameter: interaction.callProcessingDetails.ani is missing.');
+        res.status(400).send('Request missing ANI');
+        return;
+    }
   
     // Create an ISO 8601 formated time string
     const ISOtimeString = `${req.body.scheduledTime}:00.000-05:00`;
