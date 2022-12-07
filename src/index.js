@@ -43,8 +43,8 @@ app.post('/', async (req, res) => {
 
 // Create server socket and listen for requests.
 const listenPort = parseInt(process.env.PORT) || 8080;
-app.listen(listenPort, () => {
-    console.log(`cctsa-wxccdemobot-fulfillment: listening on port ${listenPort}`);
+app.listen(listenPort, (listenPort) => {
+    console.log(`cctsa-scheduled-callback-handler: listening on port ${listenPort}`);
 });
 
 module.exports = app;
