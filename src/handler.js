@@ -126,7 +126,7 @@ async function handleFulfillment (req, res) {
         // Return html status and message
         res.status(200).send({ "retval": 0, "retmsg": "Task created successfully." });
         return;
-    } catch (error) {
+    } catch (err) {
         console.error('Unhandled error: '+err.stack);
         res.status(500).send({ "retval": -1, "retmsg": "Unhandled error:"+err.message });
         return;
