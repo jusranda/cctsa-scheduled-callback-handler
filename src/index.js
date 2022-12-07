@@ -23,6 +23,7 @@
 const handler = require('./handler');
 const express = require('express');
 const bodyParser = require('body-parser');
+const cors = require('cors');
 const app = express();
 
 // Parse HTTP request body.
