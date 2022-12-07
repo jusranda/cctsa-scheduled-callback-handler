@@ -107,6 +107,7 @@ async function handleFulfillment (req, res) {
     const result = await client.createTask(request);
   
     // Probably good idea to do some error checking/validation here
+    console.log('createTask: '+JSON.stringify(result));
   
     // Return html status and message
     res.status(200).send('task created');
