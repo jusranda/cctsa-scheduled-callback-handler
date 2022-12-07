@@ -38,80 +38,87 @@ const WXCXT_TASK_HANDLER_URL = process.env.WXCXT_TASK_HANDLER_URL;
  * @param {Object} res  The HTTP response.
  */
 async function handleFulfillment (req, res) {
-    if (GCP_CLOUD_TASKS_QUEUE == undefined) {
-        console.error('application initialization error: Missing GCP_CLOUD_TASKS_QUEUE environment variable');
-        res.status(500).send('application intialization failure');
+    try {
+        if (GCP_CLOUD_TASKS_QUEUE == undefined) {
+            console.error('application initialization error: Missing GCP_CLOUD_TASKS_QUEUE environment variable');
+            res.status(500).send({ "retval": -1, "retmsg": "application intialization failure" });
+            return;
+        }
+        //console.debug(`GCP_CLOUD_TASKS_QUEUE: ${GCP_CLOUD_TASKS_QUEUE}`);
+    
+        if (WXCXT_TASK_HANDLER_URL == undefined) {
+            console.error('application initialization error: Missing WXCXT_TASK_HANDLER_URL environment variable');
+            res.status(500).send({ "retval": -1, "retmsg": "application intialization failure" });
+            return;
+        }
+        //console.debug(`WXCXT_TASK_HANDLER_URL: ${WXCXT_TASK_HANDLER_URL}`);
+    
+        // handle preflight requests here
+        if (req.method === "OPTIONS") {
+            res.set('Access-Control-Allow-Methods', 'GET, POST');
+            res.set('Access-Control-Allow-Headers', 'Content-Type, Accept');
+            res.status(204).send({ "retval": 0, "retmsg": "OPTIONS processed." });
+            return;
+        }
+      
+        // Check for missing parameters.
+        if (req.body.scheduledTime == '') {
+            console.error('Missing body parameter: scheduledTime is missing.');
+            res.status(400).send({ "retval": 1, "retmsg": "Invalid parameters" });
+            return;
+        }
+        if (req.body.interaction.callProcessingDetails.QueueId == '') {
+            console.error('Missing body parameter: interaction.callProcessingDetails.QueueId is missing.');
+            res.status(400).send({ "retval": 1, "retmsg": "Invalid parameters" });
+            return;
+        }
+        if (req.body.interaction.callProcessingDetails.ani == '') {
+            console.error('Missing body parameter: interaction.callProcessingDetails.ani is missing.');
+            res.status(400).send({ "retval": 1, "retmsg": "Invalid parameters" });
+            return;
+        }
+      
+        // Create an ISO 8601 formated time string
+        const ISOtimeString = `${req.body.scheduledTime}:00.000-05:00`;
+        const scheduledTimeEpoch = Date.parse(ISOtimeString);
+      
+        // Create a Cloud Task object
+        const task = {
+            httpRequest: {
+                httpMethod: "POST",
+                url: WXCXT_TASK_HANDLER_URL,
+                headers: { "Content-Type": "application/json" }
+            },
+        };
+      
+        // Add a payload to the task
+        const payload = {
+            queueId: req.body.interaction.callProcessingDetails.QueueId,
+            callbackNumber: req.body.interaction.callProcessingDetails.ani
+        };
+        console.log('payload:', payload);
+        console.log('req.body:', JSON.stringify(req.body));
+        task.httpRequest.body = Buffer.from(JSON.stringify(payload)).toString("base64");
+      
+        // Set execution time for task in epoch seconds
+        task.scheduleTime = {seconds: scheduledTimeEpoch / 1000};
+      
+        // Submit create cloud task request
+        const request = {parent: GCP_CLOUD_TASKS_QUEUE, task: task};
+        const result = await client.createTask(request);
+      
+        // Probably good idea to do some error checking/validation here
+        console.log('createTask: '+JSON.stringify(result));
+      
+        // Return html status and message
+        res.status(200).send({ "retval": 0, "retmsg": "Task created successfully." });
+        return;
+    } catch (error) {
+        console.error('Unhandled error: '+err.stack);
+        res.status(500).send({ "retval": -1, "retmsg": "Unhandled error:"+err.message });
         return;
     }
-    //console.debug(`GCP_CLOUD_TASKS_QUEUE: ${GCP_CLOUD_TASKS_QUEUE}`);
-
-    if (WXCXT_TASK_HANDLER_URL == undefined) {
-        console.error('application initialization error: Missing WXCXT_TASK_HANDLER_URL environment variable');
-        res.status(500).send('application intialization failure');
-        return;
-    }
-    //console.debug(`WXCXT_TASK_HANDLER_URL: ${WXCXT_TASK_HANDLER_URL}`);
-
-    // handle preflight requests here
-    if (req.method === "OPTIONS") {
-        res.set('Access-Control-Allow-Methods', 'GET, POST');
-        res.set('Access-Control-Allow-Headers', 'Content-Type, Accept');
-        res.status(204).send('');
-        return;
-    }
-  
-    // Check for missing parameters.
-    if (req.body.scheduledTime == '') {
-        console.error('Missing body parameter: scheduledTime is missing.');
-        res.status(400).send('Request missing scheduled time');
-        return;
-    }
-    if (req.body.interaction.callProcessingDetails.QueueId == '') {
-        console.error('Missing body parameter: interaction.callProcessingDetails.QueueId is missing.');
-        res.status(400).send('Request missing queue ID');
-        return;
-    }
-    if (req.body.interaction.callProcessingDetails.ani == '') {
-        console.error('Missing body parameter: interaction.callProcessingDetails.ani is missing.');
-        res.status(400).send('Request missing ANI');
-        return;
-    }
-  
-    // Create an ISO 8601 formated time string
-    const ISOtimeString = `${req.body.scheduledTime}:00.000-05:00`;
-    const scheduledTimeEpoch = Date.parse(ISOtimeString);
-  
-    // Create a Cloud Task object
-    const task = {
-        httpRequest: {
-            httpMethod: "POST",
-            url: WXCXT_TASK_HANDLER_URL,
-            headers: { "Content-Type": "application/json" }
-        },
-    };
-  
-    // Add a payload to the task
-    const payload = {
-        queueId: req.body.interaction.callProcessingDetails.QueueId,
-        callbackNumber: req.body.interaction.callProcessingDetails.ani
-    };
-    console.log('payload:', payload);
-    console.log('req.body:', JSON.stringify(req.body));
-    task.httpRequest.body = Buffer.from(JSON.stringify(payload)).toString("base64");
-  
-    // Set execution time for task in epoch seconds
-    task.scheduleTime = {seconds: scheduledTimeEpoch / 1000};
-  
-    // Submit create cloud task request
-    const request = {parent: GCP_CLOUD_TASKS_QUEUE, task: task};
-    const result = await client.createTask(request);
-  
-    // Probably good idea to do some error checking/validation here
-    console.log('createTask: '+JSON.stringify(result));
-  
-    // Return html status and message
-    res.status(200).send('task created');
-    return;
+    
 }
 
 module.exports = {handleFulfillment};
