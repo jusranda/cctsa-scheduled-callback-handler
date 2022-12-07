@@ -107,8 +107,13 @@ async function handleFulfillment (req, res) {
         const request = {parent: GCP_CLOUD_TASKS_QUEUE, task: task};
         const result = await client.createTask(request);
       
-        // Probably good idea to do some error checking/validation here
         console.log('createTask: '+JSON.stringify(result));
+
+        if (result.createTask == undefined || result.createTask.length === 0) {
+            console.error('Unhandled error: '+err.stack);
+            res.status(500).send({ "retval": 2, "retmsg": "Failed to create task." });
+            return;
+        }
       
         // Return html status and message
         res.status(200).send({ "retval": 0, "retmsg": "Task created successfully." });
