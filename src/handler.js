@@ -52,8 +52,6 @@ async function handleFulfillment (req, res) {
     }
     //console.debug(`WXCXT_TASK_HANDLER_URL: ${WXCXT_TASK_HANDLER_URL}`);
 
-    res.set('Access-Control-Allow-Origin', "*")
-
     // handle preflight requests here
     if (req.method === "OPTIONS") {
         res.set('Access-Control-Allow-Methods', 'GET, POST');
