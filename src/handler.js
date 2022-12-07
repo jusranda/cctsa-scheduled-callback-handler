@@ -96,7 +96,7 @@ async function handleFulfillment (req, res) {
         callbackNumber: req.body.interaction.callProcessingDetails.ani
     };
     console.log('payload:', payload);
-    console.log('res.body:', res.body);
+    console.log('req.body:', req.body);
     task.httpRequest.body = Buffer.from(JSON.stringify(payload)).toString("base64");
   
     // Set execution time for task in epoch seconds
