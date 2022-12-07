@@ -78,6 +78,14 @@ async function handleFulfillment (req, res) {
             return;
         }
       
+        // Introduce a fake error for testing.
+
+        if (req.body.scheduledTime.includes('2022-12-08')) {
+            console.error('Bad date value: 2022-12-08 is forbidden.');
+            res.status(400).send({ "retval": 1, "retmsg": "Forbidden date" });
+            return;
+        }
+
         // Create an ISO 8601 formated time string
         const ISOtimeString = `${req.body.scheduledTime}:00.000-05:00`;
         const scheduledTimeEpoch = Date.parse(ISOtimeString);
