@@ -29,6 +29,12 @@ const app = express();
 app.use(bodyParser.json()); // application/json
 app.use(bodyParser.urlencoded({ extended: true })); // application/x-www-form-urlencoded
 
+// Handle CORS for all domains.
+app.use(cors({
+    //origin: 'https://desktop.wxcc-us1.cisco.com'
+    origin: '*'
+}));
+
 // Handle HTTP POST / request.
 app.post('/', async (req, res) => {
     await handler.handleFulfillment(req, res);
