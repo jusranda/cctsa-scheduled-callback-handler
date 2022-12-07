@@ -117,7 +117,7 @@ async function handleFulfillment (req, res) {
       
         console.log('createTask: '+JSON.stringify(result));
 
-        if (result.createTask == undefined || result.createTask.length === 0) {
+        if (result == undefined || result.length === 0) {
             console.error('Failed to create task.');
             res.status(500).send({ "retval": 2, "retmsg": "Failed to create task." });
             return;
