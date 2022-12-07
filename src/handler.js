@@ -39,18 +39,18 @@ const WXCXT_TASK_HANDLER_URL = process.env.WXCXT_TASK_HANDLER_URL;
  */
 async function handleFulfillment (req, res) {
     if (GCP_CLOUD_TASKS_QUEUE == undefined) {
-        console.log('application initialization error: Missing GCP_CLOUD_TASKS_QUEUE environment variable');
+        console.error('application initialization error: Missing GCP_CLOUD_TASKS_QUEUE environment variable');
         res.status(500).send('application intialization failure');
         return;
     }
-    console.log(`GCP_CLOUD_TASKS_QUEUE: ${GCP_CLOUD_TASKS_QUEUE}`);
+    //console.debug(`GCP_CLOUD_TASKS_QUEUE: ${GCP_CLOUD_TASKS_QUEUE}`);
 
     if (WXCXT_TASK_HANDLER_URL == undefined) {
-        console.log('application initialization error: Missing WXCXT_TASK_HANDLER_URL environment variable');
+        console.error('application initialization error: Missing WXCXT_TASK_HANDLER_URL environment variable');
         res.status(500).send('application intialization failure');
         return;
     }
-    console.log(`WXCXT_TASK_HANDLER_URL: ${WXCXT_TASK_HANDLER_URL}`);
+    //console.debug(`WXCXT_TASK_HANDLER_URL: ${WXCXT_TASK_HANDLER_URL}`);
 
     res.set('Access-Control-Allow-Origin', "*")
 
